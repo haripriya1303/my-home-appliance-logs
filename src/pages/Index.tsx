@@ -5,12 +5,14 @@ import { Plus, Search, Home, Shield, Clock, Wrench } from "lucide-react";
 import { ApplianceCard } from "@/components/ApplianceCard";
 import { StatCard } from "@/components/StatCard";
 import { FilterTabs } from "@/components/FilterTabs";
+import { AddApplianceDialog } from "@/components/AddApplianceDialog";
 import { mockAppliances } from "@/data/mockAppliances";
 import { WarrantyFilter, Appliance } from "@/types/appliance";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [appliances] = useState<Appliance[]>(mockAppliances);
+  const { toast } = useToast();
+  const [appliances, setAppliances] = useState<Appliance[]>(mockAppliances);
   const [filter, setFilter] = useState<WarrantyFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -45,10 +47,11 @@ const Index = () => {
     });
   };
 
-  const handleAddAppliance = () => {
+  const handleAddAppliance = (newAppliance: Appliance) => {
+    setAppliances(prev => [...prev, newAppliance]);
     toast({
-      title: "Add New Appliance",
-      description: "Add appliance functionality coming soon!",
+      title: "Appliance Added",
+      description: `${newAppliance.name} has been added successfully!`,
     });
   };
 
@@ -66,10 +69,7 @@ const Index = () => {
                 Manage warranties, maintenance, and service contacts for all your home electronics
               </p>
             </div>
-            <Button onClick={handleAddAppliance} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Appliance
-            </Button>
+            <AddApplianceDialog onAddAppliance={handleAddAppliance} />
           </div>
         </div>
       </header>
@@ -130,14 +130,7 @@ const Index = () => {
             <h2 className="text-2xl font-bold">
               Your Appliances ({filteredAppliances.length})
             </h2>
-            <Button 
-              variant="outline" 
-              onClick={handleAddAppliance}
-              className="border-primary/20 hover:bg-primary/5"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add New
-            </Button>
+            <AddApplianceDialog onAddAppliance={handleAddAppliance} />
           </div>
           
           {filteredAppliances.length === 0 ? (
