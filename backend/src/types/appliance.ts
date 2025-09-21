@@ -11,8 +11,8 @@ export interface Appliance {
   nextMaintenanceDate?: string;
   status: 'under-warranty' | 'warranty-expired' | 'expiring-soon';
   notes?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type WarrantyFilter = 'all' | 'active-warranty' | 'expiring-soon';

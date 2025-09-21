@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Home, Shield, Clock, Wrench } from "lucide-react";
@@ -6,15 +6,38 @@ import { ApplianceCard } from "@/components/ApplianceCard";
 import { StatCard } from "@/components/StatCard";
 import { FilterTabs } from "@/components/FilterTabs";
 import { AddApplianceDialog } from "@/components/AddApplianceDialog";
-import { mockAppliances } from "@/data/mockAppliances";
+import { applianceService } from "@/services/applianceService";
 import { WarrantyFilter, Appliance } from "@/types/appliance";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { toast } = useToast();
-  const [appliances, setAppliances] = useState<Appliance[]>(mockAppliances);
+  const [appliances, setAppliances] = useState<Appliance[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<WarrantyFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Load appliances from API on component mount
+  useEffect(() => {
+    loadAppliances();
+  }, []);
+
+  const loadAppliances = async () => {
+    try {
+      setLoading(true);
+      const data = await applianceService.getAllAppliances();
+      setAppliances(data);
+    } catch (error) {
+      console.error('Failed to load appliances:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load appliances. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredAppliances = appliances.filter(appliance => {
     const matchesSearch = appliance.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,13 +70,46 @@ const Index = () => {
     });
   };
 
-  const handleAddAppliance = (newAppliance: Appliance) => {
-    setAppliances(prev => [...prev, newAppliance]);
-    toast({
-      title: "Appliance Added",
-      description: `${newAppliance.name} has been added successfully!`,
-    });
+  const handleAddAppliance = async (newApplianceData: Omit<Appliance, 'id' | 'status' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const createdAppliance = await applianceService.createAppliance({
+        name: newApplianceData.name,
+        brand: newApplianceData.brand,
+        model: newApplianceData.model,
+        serialNumber: newApplianceData.serialNumber,
+        category: newApplianceData.category,
+        location: newApplianceData.location,
+        purchaseDate: newApplianceData.purchaseDate,
+        warrantyExpiration: newApplianceData.warrantyExpiration,
+        nextMaintenanceDate: newApplianceData.nextMaintenanceDate,
+        notes: newApplianceData.notes,
+      });
+      
+      setAppliances(prev => [...prev, createdAppliance]);
+      toast({
+        title: "Appliance Added",
+        description: `${createdAppliance.name} has been added successfully!`,
+      });
+    } catch (error) {
+      console.error('Failed to add appliance:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add appliance. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading appliances...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

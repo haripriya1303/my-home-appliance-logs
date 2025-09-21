@@ -41,7 +41,7 @@ const applianceSchema = z.object({
 type ApplianceFormData = z.infer<typeof applianceSchema>;
 
 interface AddApplianceDialogProps {
-  onAddAppliance: (appliance: Appliance) => void;
+  onAddAppliance: (appliance: Omit<Appliance, 'id' | 'status' | 'createdAt' | 'updatedAt'>) => void;
 }
 
 const categories = [
@@ -68,21 +68,7 @@ export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) 
   });
 
   const onSubmit = (data: ApplianceFormData) => {
-    const warrantyExpDate = new Date(data.warrantyExpiration);
-    const today = new Date();
-    const monthsUntilExpiry = (warrantyExpDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24 * 30);
-    
-    let status: Appliance['status'];
-    if (monthsUntilExpiry < 0) {
-      status = 'warranty-expired';
-    } else if (monthsUntilExpiry <= 3) {
-      status = 'expiring-soon';
-    } else {
-      status = 'under-warranty';
-    }
-
-    const newAppliance: Appliance = {
-      id: `app-${Date.now()}`,
+    const newAppliance = {
       name: data.name,
       brand: data.brand,
       model: data.model,
@@ -93,7 +79,6 @@ export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) 
       warrantyExpiration: data.warrantyExpiration,
       nextMaintenanceDate: data.nextMaintenanceDate,
       notes: data.notes,
-      status,
     };
 
     onAddAppliance(newAppliance);
