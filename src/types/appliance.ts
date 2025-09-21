@@ -15,4 +15,4 @@ export interface Appliance {
   updatedAt?: string;
 }
 
-export type WarrantyFilter = 'all' | 'active-warranty' | 'expiring-soon';
+export type WarrantyFilter = 'all' | 'active-warranty' | 'expiring-soon' | 'expired';

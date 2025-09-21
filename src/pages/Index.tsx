@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Home, Shield, Clock, Wrench } from "lucide-react";
+import { Plus, Search, Home, Shield, Clock, Wrench, AlertTriangle } from "lucide-react";
 import { ApplianceCard } from "@/components/ApplianceCard";
 import { StatCard } from "@/components/StatCard";
 import { FilterTabs } from "@/components/FilterTabs";
@@ -51,6 +51,8 @@ const Index = () => {
         return appliance.status === 'under-warranty';
       case 'expiring-soon':
         return appliance.status === 'expiring-soon';
+      case 'expired':
+        return appliance.status === 'warranty-expired';
       default:
         return true;
     }
@@ -60,6 +62,7 @@ const Index = () => {
     total: appliances.length,
     activeWarranties: appliances.filter(a => a.status === 'under-warranty').length,
     expiringSoon: appliances.filter(a => a.status === 'expiring-soon').length,
+    expired: appliances.filter(a => a.status === 'warranty-expired').length,
     maintenanceDue: appliances.filter(a => a.nextMaintenanceDate).length
   };
 
@@ -134,7 +137,7 @@ const Index = () => {
         {/* Stats Overview */}
         <section>
           <h2 className="text-2xl font-bold mb-6">Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <StatCard
               title="Total Appliances"
               value={stats.total}
@@ -154,6 +157,13 @@ const Index = () => {
               description="Within 30 days"
               icon={Clock}
               iconColor="text-warning"
+            />
+            <StatCard
+              title="Expired"
+              value={stats.expired}
+              description="Warranty expired"
+              icon={AlertTriangle}
+              iconColor="text-destructive"
             />
             <StatCard
               title="Maintenance Due"
