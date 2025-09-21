@@ -7,21 +7,33 @@ export class ApplianceController {
   
   async getAllAppliances(req: Request, res: Response, next: NextFunction) {
     try {
-      const { search, filter, category, limit, offset } = req.query as any;
+      const { search, filter, status, category, limit, offset, includeCounts } = req.query as any;
       
-      const appliances = await applianceService.getAllAppliances({
+      const result = await applianceService.getAllAppliances({
         search,
         filter,
+        status,
         category,
         limit,
-        offset
+        offset,
+        includeCounts
       });
       
-      res.json({
-        success: true,
-        data: appliances,
-        count: appliances.length
-      });
+      // Handle response format based on whether counts were requested
+      if (includeCounts && typeof result === 'object' && 'appliances' in result) {
+        res.json({
+          success: true,
+          data: result.appliances,
+          counts: result.counts,
+          count: result.appliances.length
+        });
+      } else {
+        res.json({
+          success: true,
+          data: result,
+          count: Array.isArray(result) ? result.length : 0
+        });
+      }
     } catch (error) {
       next(error);
     }
