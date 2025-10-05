@@ -3,22 +3,23 @@
   "version": "1.0.0",
   "description": "Home Appliance Tracker - Monorepo",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
-    "dev:backend": "npm run dev --workspace=backend",
-    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev": "concurrently \"npm run dev --workspace=home-appliance-backend\" \"npm run dev --workspace=home-appliance-frontend\"",
+    "dev:backend": "npm run dev --workspace=home-appliance-backend",
+    "dev:frontend": "npm run dev --workspace=home-appliance-frontend",
     "build": "npm run build --workspaces",
-    "build:backend": "npm run build --workspace=backend",
-    "build:frontend": "npm run build --workspace=frontend",
-    "start": "npm run start --workspace=backend",
+    "build:backend": "npm run build --workspace=home-appliance-backend",
+    "build:frontend": "npm run build --workspace=home-appliance-frontend",
+    "start": "npm run start --workspace=home-appliance-backend",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
-    "db:generate": "npm run db:generate --workspace=backend",
-    "db:migrate": "npm run db:migrate --workspace=backend",
-    "db:seed": "npm run db:seed --workspace=backend"
+    "db:generate": "npm run db:generate --workspace=home-appliance-backend",
+    "db:migrate": "npm run db:migrate --workspace=home-appliance-backend",
+    "db:seed": "npm run db:seed --workspace=home-appliance-backend"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
