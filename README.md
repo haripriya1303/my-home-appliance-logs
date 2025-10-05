@@ -1,73 +1,71 @@
-# Welcome to your Lovable project
+# Home Appliance Tracker - Monorepo
 
-## Project info
+This project has been restructured as a monorepo with separate packages for frontend and backend.
 
-**URL**: https://lovable.dev/projects/0586a6a8-6ac0-4c8e-8245-14c6602bd58e
+## Project Structure
 
-## How can I edit this code?
+```
+.
+├── packages/
+│   ├── frontend/          # React frontend application
+│   └── backend/           # Express.js backend API
+├── package.json           # Root package with workspace configuration
+├── README.md              # This file
+└── ...                    # Other root-level configuration files
+```
 
-There are several ways of editing your application.
+## Packages
 
-**Use Lovable**
+### Frontend
+The frontend is a React application built with Vite, TypeScript, and Shadcn UI components.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0586a6a8-6ac0-4c8e-8245-14c6602bd58e) and start prompting.
+### Backend
+The backend is an Express.js API with TypeScript, Drizzle ORM, and PostgreSQL database.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Development
 
-**Use your preferred IDE**
+To start both frontend and backend in development mode:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+To start only the frontend:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run dev:frontend
+```
 
-**Use GitHub Codespaces**
+To start only the backend:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run dev:backend
+```
 
-## What technologies are used for this project?
+## Building
 
-This project is built with:
+To build both packages:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+npm run build
+```
 
-## How can I deploy this project?
+## Database
 
-Simply open [Lovable](https://lovable.dev/projects/0586a6a8-6ac0-4c8e-8245-14c6602bd58e) and click on Share -> Publish.
+To generate database migrations:
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+npm run db:generate
+```
 
-Yes, you can!
+To apply database migrations:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```bash
+npm run db:migrate
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+To seed the database:
+
+```bash
+npm run db:seed
+```

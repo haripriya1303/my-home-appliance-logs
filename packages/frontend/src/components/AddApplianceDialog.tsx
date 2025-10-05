@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +51,6 @@ const categories = [
 export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) {
   const [open, setOpen] = useState(false);
   const form = useForm<ApplianceFormData>({
-    resolver: zodResolver(applianceSchema),
     defaultValues: {
       name: "",
       brand: "",
@@ -62,12 +60,27 @@ export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) 
       location: "",
       purchaseDate: "",
       warrantyExpiration: "",
-      nextMaintenanceDate: "",
-      notes: "",
+      nextMaintenanceDate: undefined,
+      notes: undefined,
     },
   });
 
   const onSubmit = (data: ApplianceFormData) => {
+    // Simple validation
+    try {
+      applianceSchema.parse(data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          form.setError(err.path[0] as keyof ApplianceFormData, {
+            type: "manual",
+            message: err.message,
+          });
+        });
+      }
+      return;
+    }
+
     const newAppliance = {
       name: data.name,
       brand: data.brand,
@@ -77,8 +90,8 @@ export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) 
       location: data.location,
       purchaseDate: data.purchaseDate,
       warrantyExpiration: data.warrantyExpiration,
-      nextMaintenanceDate: data.nextMaintenanceDate,
-      notes: data.notes,
+      nextMaintenanceDate: data.nextMaintenanceDate || null,
+      notes: data.notes || null,
     };
 
     onAddAppliance(newAppliance);
@@ -235,7 +248,7 @@ export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) 
                   <FormItem>
                     <FormLabel>Next Maintenance Date (Optional)</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...field} value={field.value || ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -254,6 +267,7 @@ export function AddApplianceDialog({ onAddAppliance }: AddApplianceDialogProps) 
                       placeholder="Any additional notes about this appliance..."
                       className="min-h-[80px]"
                       {...field} 
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
