@@ -42,8 +42,8 @@ app.use((req, res) => {
 });
 
 // Use Render PORT environment variable or default to 3001
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+const PORT = Number(process.env.PORT )|| 3001;
+app.listen(PORT, '0.0.0.0', () => { // '0.0.0.0' ensures Render can route traffic
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${config.nodeEnv}`);
   console.log(`🌐 CORS enabled for: ${config.corsOrigin}`);
