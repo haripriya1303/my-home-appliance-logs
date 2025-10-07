@@ -28,12 +28,12 @@ function checkRootPackageJson() {
             checks.push('Root package.json scripts');
         }
         
-        // Check concurrently dependency
-        if (pkg.devDependencies && pkg.devDependencies.concurrently) {
-            console.log('✅ Concurrently dependency found');
+        // Check Turborepo dependency
+        if (pkg.devDependencies && pkg.devDependencies.turbo) {
+            console.log('✅ Turborepo dependency found');
         } else {
-            console.log('❌ Concurrently dependency missing');
-            checks.push('Concurrently dependency');
+            console.log('❌ Turborepo dependency missing');
+            checks.push('Turborepo dependency');
         }
         
     } catch (error) {
@@ -45,7 +45,7 @@ function checkRootPackageJson() {
 // Check backend package.json
 function checkBackendPackageJson() {
     try {
-        const pkg = JSON.parse(fs.readFileSync('backend/package.json', 'utf8'));
+        const pkg = JSON.parse(fs.readFileSync('packages/backend/package.json', 'utf8'));
         
         console.log('✅ Backend package.json exists');
         
@@ -64,10 +64,10 @@ function checkBackendPackageJson() {
         }
         
         // Check main entry point
-        if (pkg.main === 'index.js') {
-            console.log('✅ Backend main entry point is index.js');
+        if (pkg.main === 'dist/app.js') {
+            console.log('✅ Backend main entry point is dist/app.js');
         } else {
-            console.log(`⚠️  Backend main entry point is ${pkg.main} (expected index.js)`);
+            console.log(`⚠️  Backend main entry point is ${pkg.main} (expected dist/app.js)`);
         }
         
     } catch (error) {
@@ -78,27 +78,27 @@ function checkBackendPackageJson() {
 
 // Check backend index.js
 function checkBackendIndexJs() {
-    if (fs.existsSync('backend/index.js')) {
-        console.log('✅ Backend index.js entry point exists');
+    if (fs.existsSync('packages/backend/src')) {
+        console.log('✅ Backend source directory exists');
     } else {
-        console.log('❌ Backend index.js entry point missing');
-        checks.push('Backend index.js');
+        console.log('❌ Backend source directory missing');
+        checks.push('Backend source directory');
     }
 }
 
 // Check build directories
 function checkBuildDirectories() {
     // Check if builds work (directories exist after build)
-    if (fs.existsSync('dist')) {
+    if (fs.existsSync('packages/frontend/dist')) {
         console.log('✅ Frontend dist directory exists');
     } else {
-        console.log('⚠️  Frontend dist directory not found (run npm run build)');
+        console.log('⚠️  Frontend dist directory not found (run npx turbo run build --filter=home-appliance-frontend)');
     }
     
-    if (fs.existsSync('backend/dist')) {
+    if (fs.existsSync('packages/backend/dist')) {
         console.log('✅ Backend dist directory exists');
     } else {
-        console.log('⚠️  Backend dist directory not found (run cd backend && npm run build)');
+        console.log('⚠️  Backend dist directory not found (run npx turbo run build --filter=home-appliance-backend)');
     }
 }
 
@@ -122,7 +122,7 @@ function checkDeploymentFiles() {
 
 // Check backend environment file
 function checkBackendEnv() {
-    if (fs.existsSync('backend/.env')) {
+    if (fs.existsSync('packages/backend/.env')) {
         console.log('✅ Backend .env file exists');
     } else {
         console.log('⚠️  Backend .env file not found (create from .env.example)');
@@ -153,7 +153,7 @@ if (checks.length === 0) {
     console.log('\n📋 Next steps:');
     console.log('1. Commit and push your changes to GitHub');
     console.log('2. Create services on Render.com:');
-    console.log('   - Backend: Web Service with root directory "backend"');
+    console.log('   - Backend: Web Service with root directory "."');
     console.log('   - Frontend: Static Site with root directory "." (root)');
     console.log('3. Configure environment variables in Render');
     console.log('4. Deploy!');

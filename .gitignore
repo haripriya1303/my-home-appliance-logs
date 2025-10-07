@@ -16,6 +16,7 @@ dist/
 dist-ssr/
 **/dist/
 **/dist-ssr/
+.turbo/
 
 # Environment files
 .env

@@ -4,8 +4,8 @@
 echo "Installing dependencies..."
 npm install
 
-echo "Building frontend..."
-npm run build
+echo "Building frontend via Turborepo pipeline..."
+npx turbo run build --filter=home-appliance-frontend
 
 echo "Frontend build completed successfully!"
-echo "Static files are in ./dist directory"
+echo "Static files are in ./packages/frontend/dist directory"

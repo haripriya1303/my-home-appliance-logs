@@ -2,10 +2,10 @@
 nixPkgs = ['nodejs_18', 'npm-9_x']
 
 [phases.build]
-cmds = ['npm install', 'npm run build']
+cmds = ['npm install', 'npx turbo run build']
 
 [phases.deploy]
-cmd = 'npm start'
+cmd = 'turbo run start --filter=home-appliance-backend'
 
 [variables]
 NODE_ENV = 'production'

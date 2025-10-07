@@ -12,10 +12,10 @@ Write-Host "Solution: Explicit NPM configuration with Railway/Nixpacks files"
 Write-Host "`n--- Checking Project Structure ---" -ForegroundColor Yellow
 
 # Check if we're in the right directory
-if (Test-Path "package.json" -and Test-Path "backend/package.json") {
+if (Test-Path "package.json" -and Test-Path "packages/frontend/package.json" -and Test-Path "packages/backend/package.json") {
     Write-Host "✓ Monorepo structure detected" -ForegroundColor Green
-    Write-Host "  Frontend: package.json" -ForegroundColor Cyan
-    Write-Host "  Backend: backend/package.json" -ForegroundColor Cyan
+    Write-Host "  Frontend: packages/frontend/package.json" -ForegroundColor Cyan
+    Write-Host "  Backend: packages/backend/package.json" -ForegroundColor Cyan
 } else {
     Write-Host "✗ Invalid project structure" -ForegroundColor Red
     exit 1
@@ -24,7 +24,7 @@ if (Test-Path "package.json" -and Test-Path "backend/package.json") {
 Write-Host "`n--- Verifying Configuration Files ---" -ForegroundColor Yellow
 
 # Check Railway configuration files
-$configFiles = @("railway.toml", "nixpacks.toml", "backend/nixpacks.toml")
+$configFiles = @("railway.toml", "nixpacks.toml", "packages/backend/nixpacks.toml")
 foreach ($file in $configFiles) {
     if (Test-Path $file) {
         Write-Host "✓ $file exists" -ForegroundColor Green
@@ -39,7 +39,7 @@ Write-Host "`n--- Testing Build Process ---" -ForegroundColor Yellow
 Write-Host "Testing frontend build..."
 try {
     npm install --silent
-    npm run build --silent
+    npx turbo run build --filter=home-appliance-frontend
     Write-Host "✓ Frontend build successful" -ForegroundColor Green
 } catch {
     Write-Host "✗ Frontend build failed: $($_.Exception.Message)" -ForegroundColor Red
@@ -48,10 +48,7 @@ try {
 # Test backend build
 Write-Host "Testing backend build..."
 try {
-    Set-Location backend
-    npm install --silent
-    npm run build --silent
-    Set-Location ..
+    npx turbo run build --filter=home-appliance-backend
     Write-Host "✓ Backend build successful" -ForegroundColor Green
 } catch {
     Write-Host "✗ Backend build failed: $($_.Exception.Message)" -ForegroundColor Red
@@ -60,22 +57,22 @@ try {
 
 Write-Host "`n--- Railway Deployment Instructions ---" -ForegroundColor Cyan
 Write-Host "1. Commit all configuration files to Git:"
-Write-Host "   git add railway.toml nixpacks.toml backend/nixpacks.toml"
+Write-Host "   git add railway.toml nixpacks.toml packages/backend/nixpacks.toml"
 Write-Host "   git commit -m 'Add Railway deployment configuration'"
 Write-Host ""
 Write-Host "2. For Frontend deployment:"
 Write-Host "   - Create new Railway service"
 Write-Host "   - Connect to Git repository"
 Write-Host "   - Set root directory to: /"
-Write-Host "   - Build command: npm install && npm run build"
-Write-Host "   - Start command: npm run preview"
+Write-Host "   - Build command: npm install && npx turbo run build --filter=home-appliance-frontend"
+Write-Host "   - Start command: npm run preview --workspace=home-appliance-frontend -- --host 0.0.0.0 --port $PORT"
 Write-Host ""
 Write-Host "3. For Backend deployment:"
 Write-Host "   - Create new Railway service"
 Write-Host "   - Connect to Git repository"
-Write-Host "   - Set root directory to: /backend"
-Write-Host "   - Build command: npm install && npm run build"
-Write-Host "   - Start command: npm start"
+Write-Host "   - Set root directory to: /"
+Write-Host "   - Build command: npm install && npx turbo run build --filter=home-appliance-backend"
+Write-Host "   - Start command: npm run start --workspace=home-appliance-backend"
 Write-Host ""
 Write-Host "4. Environment Variables (Backend):"
 Write-Host "   - DATABASE_URL=your_postgresql_connection_string"

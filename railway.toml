@@ -9,12 +9,16 @@ restartPolicyMaxRetries = 10
 [[services]]
 name = "frontend"
 source = "."
-build.buildCommand = "npm install && npm run build"
-build.watchPatterns = ["src/**"]
+build.installCommand = "npm install"
+build.buildCommand = "npx turbo run build --filter=home-appliance-frontend"
+build.watchPatterns = ["packages/frontend/src/**"]
+start.command = "npm run preview --workspace=home-appliance-frontend -- --host 0.0.0.0 --port $PORT"
 
 [[services]]
 name = "backend"
-source = "./backend"
-build.buildCommand = "npm install && npm run build"
-build.watchPatterns = ["src/**"]
+source = "."
+build.installCommand = "npm install"
+build.buildCommand = "npx turbo run build --filter=home-appliance-backend"
+build.watchPatterns = ["packages/backend/src/**"]
+start.command = "npm run start --workspace=home-appliance-backend"
 variables.NODE_ENV = "production"
